@@ -13,6 +13,7 @@ $ano_fabricacao = '';
 $capacidade_toneladas = '';
 $situacao = ['ativo', 'inativo' =>'inativo', 'manutencao' => 'Em manutenção'];
 $situacao = 'ativo';
+$erros = [];
 
 if( $id >0 && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     $stmt = $conexao->prepare('SELECT * FROM trens WHERE id = ?');
@@ -34,7 +35,66 @@ if( $id >0 && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     $situacao = $trem['situacao_trem'];
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = (int) $_POST['id'];
+    $prefixo = trim($_POST['prefixo']);
+    $modelo = trim($_POST['modelo']);
+    $ano_fabricacao = trim($_POST['ano_fabricacao']);
+    $capacidade_toneladas = trim($_POST['capacidade_toneladas']);
+    $situacao = $_POST['situacao'];
+    
+    if ($prefixo === '') {.
+        $erros[] = 'Informe o prefixo do trem.';
+    }
 
+    if ($modelo === '') {
+        $erros[] = 'Informe o modelo do trem.';
+    }
+    if ($ano_fabricacao === '') {
+        $erros[] = 'Informe o ano de fabricação do trem.';
+    }
+    if (!is_numeric($ano_fabricacao) || $ano_fabricacao <=1900 || $ano_fabricacao > 2100) {
+        $erros[] = 'Informe um ano de fabricação válido.';
+    }
+    if ($capacidade_toneladas === '') {
+        $erros[] = 'Informe a capacidade do trem em toneladas.';
+
+    }
+    if (!isset($situacoes[$situacao])) {
+        $erros[] = 'Informe uma situação válida.';
+    }
+    if (count($erros) === 0) {
+        $ano_fabricacao = (int) $ano_fabricacao;
+        $capacidade_toneladas = (float) $capacidade_toneladas
+
+        if ($id > 0) {
+            $stmt = $conexao->prepare('UPDATE trens SET prefixo_trem = ?, modelo_trem = ?, ano_fabricacao = ?, capacidade_toneladas = ?, situacao = ? WHERE id = ?');
+            %stmt->bind_param('ssdisi', $prefixo, $modelo, $ano_fabricacao, $capacidade_toneladas, $situacao, $id);
+            $stmt->execute();
+
+            if ($stmt ->is_executable) {
+                $_SESSION['mensagem'] = 'Trem atualizado com sucesso.';
+            } else {
+                $_SESSION['mensagem'] = 'Não foi possivel atualizar os dados.';
+            }
+} else{
+    $stmt = $conexao->prepare('INSERT INTO trens (prefixo_trem, modelo_trem, ano_fabricacao, capacidade_toneladas, situacao) VALUES (?, ?, ?, ?, ?)');
+    $stmt->bind_param('ssdis', $prefixo, $modelo, $ano, $capacidade, $situacao);
+    $stmt-> ($stmt -> execute()); {
+        $_SESSION['mensagem'] = 'Trem cadastrado com sucesso.';
+    } else {
+        $_SESSION['mensagem'] = 'Não foi possivel cadastrar o trem.';
+    }
+}
+$stmt-> close();
+
+header('Location: index.php');
+exit;
+
+
+}
+
+}
 ?>
 
 
@@ -52,6 +112,19 @@ if( $id >0 && $_SERVER['REQUEST_METHOD'] !== 'POST') {
 </header>
 <main>
     <h1><?= $id > 0 ? 'Editar trem' : 'Novo trem' ?></h1>
+
+    <?php 
+    if (count($erro) > 0 ): ?>
+
+    <div class='aviso aviso-erro'>
+        <ul>
+            <?php foreach ($erros as $erro): ?>
+                <li><?= htmlspecialchars($erro) ?></li>
+            <?php endforeach; ?>
+            </ul>
+            </div>
+            <?php endif; ?>
+
     <form method="post" action="salvar.php">
         <input type="hidden" name="id" value="<?= $id ?>">
         <div class="linha">

@@ -71,9 +71,9 @@ $resultado = $conexao->query('SELECT * FROM trens ORDER BY prefixo_trem');
                             <td><?= (int) $trem['ano_fabricacao'] ?></td>
                             <td><?= number_format((float) $trem['capacidade_tonelas'], 2, ',', '.') ?> t </td>
                             <td>
-                                <span class="etiqueta etiqueta-<?= htmlspecialchars($trem['situacao_trem']) ?>"
+                                <span class="etiqueta etiqueta-<?= htmlspecialchars($trem['situacao_trem']) ?>'
                                     <?= htmlspecialchars($trem['situacao_trem']) ?>
-                                    </span>
+                                       </span>
                             </td>
                             <td class="acoes">
                                 <a href="formulario.php?id=<?= (int) $trem['id_trem'] ?>" class="botao botao-secundario">Editar</a>

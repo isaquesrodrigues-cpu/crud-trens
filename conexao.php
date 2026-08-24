@@ -2,14 +2,14 @@
 
 $servidor = 'localhost';;
 $usuario =  'root';
-$senha = 'root';
+$senha = '';
 $banco = 'frota_ferroviaria';
 
-$conexao = new mysqli($servidor, $usuario, $senha, $banco);
+$conexao =new mysqli( $servidor, $usuario, $senha, $banco);
 
 if ($conexao->connect_error) {
 
-    die("Falha n conexão: " . $conexao->connect_error);
+    die("Falha na conexão: " . $conexao->connect_error);
 
 }
 
